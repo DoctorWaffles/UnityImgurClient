@@ -35,7 +35,7 @@ public static class Imgur
              { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
 
         };
-        Request(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.POST, values, pCallback);
+        Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
     }
 
 
@@ -56,7 +56,7 @@ public static class Imgur
              { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
 
         };
-        return await RequestAsync<ImgurAlbumResponse>(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.POST, values);
+        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
     }
 
 
@@ -68,7 +68,7 @@ public static class Imgur
     /// <param name="pCallback">Response callback</param>
     public static void GetAlbum(string pDeleteHash, Action<ImgurAlbumResponse> pCallback = null)
     {
-        Request(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.GET, null, pCallback);
+        Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.GET, null, pCallback);
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the album</param>
     public static async Task<ImgurAlbumResponse> GetAlbumAsync(string pDeleteHash)
     {
-        return await RequestAsync<ImgurAlbumResponse>(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.GET, null);
+        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.GET, null);
     }
 
 
@@ -96,7 +96,7 @@ public static class Imgur
              { "description", pDescription },
 
         };
-        return await RequestAsync<ImgurUploadResponse>(UPLOAD_PATH + "/" + pDeleteHash, ImgurRequestMethod.POST, values);
+        return await RequestAsync<ImgurUploadResponse>(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ public static class Imgur
              { "description", pDescription },
 
         };
-        Request(UPLOAD_PATH + "/" + pDeleteHash, ImgurRequestMethod.POST, values, pCallback);
+        Request(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
     }
 
 
@@ -126,7 +126,7 @@ public static class Imgur
     /// <param name="pCallback">Response callback</param>
     public static void DeleteAlbum(string pDeleteHash, Action<ImgurResponse> pCallback = null)
     {
-        Request(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.DELETE, null, pCallback);
+        Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null, pCallback);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the album</param>
     public static async Task<ImgurResponse> DeleteAlbumAsync(string pDeleteHash)
     {
-        return await RequestAsync<ImgurResponse>(ALBUM_PATH + "/" + pDeleteHash, ImgurRequestMethod.DELETE, null);
+        return await RequestAsync<ImgurResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null);
     }
 
 
@@ -266,7 +266,8 @@ public static class Imgur
             { "ids[]", JsonUtility.ToJson(pIDs) },
         };
 
-        Request(ALBUM_PATH + "/" + pDeleteHash + "/remove_images/", ImgurRequestMethod.POST, values, pCallback);
+
+        Request(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
     }
 
     /// <summary>
@@ -281,7 +282,7 @@ public static class Imgur
             { "ids[]", JsonUtility.ToJson(pIDs) },
         };
 
-        return await RequestAsync<ImgurAlbumResponse>(ALBUM_PATH + "/" + pDeleteHash + "/remove_images/", ImgurRequestMethod.POST, values);
+        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
     }
 
 
@@ -364,7 +365,8 @@ public static class Imgur
 
     public static void DeleteUpload(string pDeleteHash, Action<ImgurResponse> pCallback = null)
     {
-        Request(UPLOAD_PATH + "/" + pDeleteHash, ImgurRequestMethod.DELETE, null, pCallback);
+        
+        Request(string.Format("{0}/{1}/remove_images/", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null, pCallback);
     }
 
     /// <summary>
@@ -373,7 +375,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the upload</param>
     public static async Task<ImgurResponse> DeleteUploadAsync(string pDeleteHash)
     {
-        return await RequestAsync<ImgurResponse>(UPLOAD_PATH + "/" + pDeleteHash, ImgurRequestMethod.DELETE, null);
+        return await RequestAsync<ImgurResponse>(string.Format("{0}/{1}/remove_images/", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null);
     }
 
 

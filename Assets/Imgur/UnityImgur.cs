@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public static class Imgur
+public static class UnityImgur
 {
     static readonly string IMGUR_BASE_URL = "https://api.imgur.com/3/";
     static readonly string UPLOAD_PATH = "upload";
@@ -23,17 +24,10 @@ public static class Imgur
     /// <param name="pDescription">The description of the ablum</param>
     /// <param name="pDeleteHashes">The deletehashes of the images that you want to be included in the album</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UpdateAlbum(string pDeleteHash, string pTitle, string pDescription = "", string[] pDeleteHashes = null, Action<ImgurAlbumResponse> pCallback = null)
+    public static void UpdateAlbum(string pDeleteHash, string pTitle = "", string pDescription = "", string pPrivacy = "", string pCover = "", string[] pDeleteHashes = null, Action<ImgurAlbumResponse> pCallback = null)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-             { "privacy", "public " },
-             { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
-
-        };
-        Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(pDeleteHashes, pTitle, pDescription, pPrivacy, pCover));
+        Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, request, pCallback);
     }
 
     /// <summary>
@@ -43,17 +37,10 @@ public static class Imgur
     /// <param name="pTitle">The title of the ablum</param>
     /// <param name="pDescription">The description of the ablum</param>
     /// <param name="pDeleteHashes">The deletehashes of the images that you want to be included in the album</param>
-    public static async Task<ImgurAlbumResponse> UpdateAlbumAsync(string pDeleteHash, string pTitle, string pDescription = "", string[] pDeleteHashes = null)
+    public static async Task<ImgurAlbumResponse> UpdateAlbumAsync(string pDeleteHash, string pTitle = "", string pDescription = "", string pPrivacy = "", string pCover = "", string[] pDeleteHashes = null)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-             { "privacy", "public " },
-             { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
-
-        };
-        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(pDeleteHashes, pTitle, pDescription, pPrivacy, pCover));
+        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, request);
     }
 
 
@@ -87,13 +74,8 @@ public static class Imgur
     /// <param name="pDescription">The new description of the upload</param>
     public static async Task<ImgurUploadResponse> UpdateUploadAsync(string pDeleteHash, string pTitle, string pDescription)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-
-        };
-        return await RequestAsync<ImgurUploadResponse>(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash));
+        return await RequestAsync<ImgurUploadResponse>(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, request);
     }
 
     /// <summary>
@@ -104,13 +86,8 @@ public static class Imgur
     /// <param name="pDescription">The new description of the upload</param>
     public static void UpdateUpload(string pDeleteHash, string pTitle, string pDescription, Action<ImgurUploadResponse> pCallback)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-
-        };
-        Request(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash));
+        Request(string.Format("{0}/{1}", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.POST, request, pCallback);
     }
 
 
@@ -132,7 +109,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the album</param>
     public static async Task<ImgurResponse> DeleteAlbumAsync(string pDeleteHash)
     {
-        return await RequestAsync<ImgurResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null);
+        return await RequestAsync<ImgurResponse>(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.DELETE);
     }
 
 
@@ -143,17 +120,10 @@ public static class Imgur
     /// <param name="pDescription">The description of the ablum</param>
     /// <param name="pDeleteHashes">The deletehashes of the images that needs to be added to the album</param>
     /// <param name="pCallback">Response callback</param>
-    public static void CreateAlbum(string pTitle, string pDescription = "", string[] pDeleteHashes = null, Action<ImgurAlbumResponse> pCallback = null)
+    public static void CreateAlbum(string pTitle = "", string pDescription = "", string pPrivacy = "", string pCover = "", string[] pDeleteHashes = null, Action<ImgurAlbumResponse> pCallback = null)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-             { "privacy", "public " },
-             { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
-
-        };
-        Request(ALBUM_PATH, ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(pDeleteHashes, pTitle, pDescription, pPrivacy, pCover));
+        Request(ALBUM_PATH, ImgurRequestMethod.POST, request, pCallback);
     }
 
 
@@ -163,17 +133,10 @@ public static class Imgur
     /// <param name="pTitle">The title of the ablum</param>
     /// <param name="pDescription">The description of the ablum</param>
     /// <param name="pDeleteHashes">The deletehashes of the images that needs to be added to the album</param>
-    public static async Task<ImgurAlbumResponse> CreateAlbumAsync(string pTitle, string pDescription = "", string[] pDeleteHashes = null)
+    public static async Task<ImgurAlbumResponse> CreateAlbumAsync(string pTitle = "", string pDescription = "", string pPrivacy = "", string pCover = "", string[] pDeleteHashes = null)
     {
-        var values = new NameValueCollection
-        {
-             { "title", pTitle },
-             { "description", pDescription },
-             { "privacy", "public " },
-             { "deletehashes[]", JsonUtility.ToJson(pDeleteHashes) }
-
-        };
-        return await RequestAsync<ImgurAlbumResponse>(ALBUM_PATH, ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(pDeleteHashes, pTitle, pDescription, pPrivacy, pCover));
+        return await RequestAsync<ImgurAlbumResponse>(ALBUM_PATH, ImgurRequestMethod.POST, request);
     }
 
 
@@ -183,21 +146,13 @@ public static class Imgur
     /// <param name="pBytes">byte[] of the image</param>
     /// <param name="pTitle">The title of the image</param>
     /// <param name="pDescription">The description of the image</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation</param>
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadImage(byte[] pBytes, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadImage(byte[] pBytes, string pTitle = "", string pDescription = "", string pDeleteHash = "", Action<ImgurUploadResponse> pCallback = null)
     {
         string base64Image = Convert.ToBase64String(pBytes);
-        var values = new NameValueCollection
-        {
-            { "image", base64Image },
-            { "type", "base64" },
-            { "title", pTitle },
-            { "description", pDescription },
-            { "album", pAlbum },
-        };
-
-        Request(UPLOAD_PATH, ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash, base64Image));
+        Request<ImgurUploadResponse>(UPLOAD_PATH, ImgurRequestMethod.POST, request);
     }
 
     /// <summary>
@@ -206,11 +161,11 @@ public static class Imgur
     /// <param name="pPath">Full path of the image</param>
     /// <param name="pTitle">The title of the image</param>
     /// <param name="pDescription">The description of the image</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this image has to be added to</param>
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this image has to be added to</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadImage(string pPath, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadImage(string pPath, string pTitle = "", string pDescription = "", string pDeleteHash = "", Action<ImgurUploadResponse> pCallback = null)
     {
-        UploadImage(File.ReadAllBytes(pPath), pTitle, pDescription, pAlbum, pCallback);
+        UploadImage(File.ReadAllBytes(pPath), pTitle, pDescription, pDeleteHash, pCallback);
     }
 
 
@@ -221,20 +176,12 @@ public static class Imgur
     /// <param name="pBytes">byte[] of the image</param>
     /// <param name="pTitle">The title of the image</param>
     /// <param name="pDescription">The description of the image</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this image has to be added to</param>
-    public static async Task<ImgurUploadResponse> UploadImageAsync(byte[] pBytes, string pTitle = "", string pDescription = "", string pAlbum = "")
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this image has to be added to</param>
+    public static async Task<ImgurUploadResponse> UploadImageAsync(byte[] pBytes, string pTitle = "", string pDescription = "", string pDeleteHash = "")
     {
         string base64Image = Convert.ToBase64String(pBytes);
-        var values = new NameValueCollection
-        {
-            { "image", base64Image },
-            { "type", "base64" },
-            { "title", pTitle },
-            { "description", pDescription },
-            { "album", pAlbum },
-        };
-
-        return await RequestAsync<ImgurUploadResponse>(UPLOAD_PATH, ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash, base64Image));
+        return await RequestAsync<ImgurUploadResponse>(UPLOAD_PATH, ImgurRequestMethod.POST, request);
     }
 
     /// <summary>
@@ -243,10 +190,10 @@ public static class Imgur
     /// <param name="pPath">Full path of the image</param>
     /// <param name="pTitle">The title of the image</param>
     /// <param name="pDescription">The description of the image</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this image has to be added to</param>
-    public static async Task<ImgurUploadResponse> UploadImageAsync(string pPath, string pTitle = "", string pDescription = "", string pAlbum = "")
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this image has to be added to</param>
+    public static async Task<ImgurUploadResponse> UploadImageAsync(string pPath, string pTitle = "", string pDescription = "", string pDeleteHash = "")
     {
-        return await UploadImageAsync(File.ReadAllBytes(pPath), pTitle, pDescription, pAlbum);
+        return await UploadImageAsync(File.ReadAllBytes(pPath), pTitle, pDescription, pDeleteHash);
     }
 
 
@@ -258,13 +205,8 @@ public static class Imgur
     /// <param name="pCallback">Response callback</param>
     public static void RemoveUploadsFromAlbum(string pDeleteHash, string[] pIDs, Action<ImgurAlbumResponse> pCallback = null)
     {
-        var values = new NameValueCollection
-        {
-            { "ids[]", JsonUtility.ToJson(pIDs) },
-        };
-
-
-        Request(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(null, "", "", "", "", pIDs));
+        Request(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, request, pCallback);
     }
 
     /// <summary>
@@ -274,37 +216,25 @@ public static class Imgur
     /// <param name="pIDs">The ids that need to be removed from the album.</param>
     public static async Task<ImgurAlbumResponse> RemoveUploadsFromAlbum(string pDeleteHash, string[] pIDs)
     {
-        var values = new NameValueCollection
-        {
-            { "ids[]", JsonUtility.ToJson(pIDs) },
-        };
-
-        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurAlbumRequest(null, "", "", "", "", pIDs));
+        return await RequestAsync<ImgurAlbumResponse>(string.Format("{0}/{1}/remove_images/", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, request);
     }
 
 
     /// <summary>
     /// Uploads an video to Imgur
     /// </summary>
-    /// <param name="pBytes">byte[] of the given video</param>
+    /// <param name="pBytes">The full path of the video</param>
+    /// <param name="pDisableAudio">Remove the audio track from a video file</param>
     /// <param name="pTitle">The title of the video</param>
     /// <param name="pDescription">The description of the video</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation</param>
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this video has to be added to</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadVideo(byte[] pBytes, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadVideo(byte[] pBytes, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pDeleteHash = "", Action<ImgurUploadResponse> pCallback = null)
     {
         string base64Video = Convert.ToBase64String(pBytes);
-        var values = new NameValueCollection
-        {
-            { "video", base64Video },
-            { "type", "base64" },
-            { "title", pTitle },
-            { "description", pDescription },
-            { "album", pAlbum },
-            { "disable_audio", pDisableAudio ? "1" : "0" }
-        };
-
-        Request(UPLOAD_PATH, ImgurRequestMethod.POST, values, pCallback);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash, "", base64Video, pDisableAudio));
+        Request(UPLOAD_PATH, ImgurRequestMethod.POST, request, pCallback);
     }
 
 
@@ -312,48 +242,43 @@ public static class Imgur
     /// Uploads an video to Imgur
     /// </summary>
     /// <param name="pPath">The full path of the video</param>
+    /// <param name="pDisableAudio">Remove the audio track from a video file</param>
     /// <param name="pTitle">The title of the video</param>
     /// <param name="pDescription">The description of the video</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this video has to be added to</param>
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this video has to be added to</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadVideo(string pPath, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadVideo(string pPath, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pDeleteHash = "", Action<ImgurUploadResponse> pCallback = null)
     {
-        UploadVideo(File.ReadAllBytes(pPath), pDisableAudio, pTitle, pDescription, pAlbum, pCallback);
+        UploadVideo(File.ReadAllBytes(pPath), pDisableAudio, pTitle, pDescription, pDeleteHash, pCallback);
     }
 
 
     /// <summary>
     /// Uploads an video to Imgur
     /// </summary>
-    /// <param name="pBytes">byte[] of the given video</param>
+    /// <param name="pBytes">The full path of the video</param>
+    /// <param name="pDisableAudio">Remove the audio track from a video file</param>
     /// <param name="pTitle">The title of the video</param>
     /// <param name="pDescription">The description of the video</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this video has to be added to</param>
-    public static async Task<ImgurUploadResponse> UploadVideoAsync(byte[] pBytes, string pTitle = "", string pDescription = "", string pAlbum = "")
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this video has to be added to</param>
+    public static async Task<ImgurUploadResponse> UploadVideoAsync(byte[] pBytes, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pDeleteHash = "")
     {
         string base64Video = Convert.ToBase64String(pBytes);
-        var values = new NameValueCollection
-        {
-            { "video", base64Video },
-            { "type", "base64" },
-            { "title", pTitle },
-            { "description", pDescription },
-            { "album", pAlbum },
-        };
-
-        return await RequestAsync<ImgurUploadResponse>(UPLOAD_PATH, ImgurRequestMethod.POST, values);
+        string request = JsonUtility.ToJson(new ImgurUploadRequest(pTitle, pDescription, pDeleteHash, "", base64Video, pDisableAudio));
+        return await RequestAsync<ImgurUploadResponse>(UPLOAD_PATH, ImgurRequestMethod.POST, request);
     }
 
     /// <summary>
     /// Uploads an video to Imgur
     /// </summary>
     /// <param name="pPath">The full path of the video</param>
+    /// <param name="pDisableAudio">Remove the audio track from a video file</param>
     /// <param name="pTitle">The title of the video</param>
     /// <param name="pDescription">The description of the video</param>
-    /// <param name="pAlbum">The deletehash of the album that was returned at creation that this video has to be added to</param>
-    public static async Task<ImgurUploadResponse> UploadVideoAsync(string pPath, string pTitle = "", string pDescription = "", string pAlbum = "")
+    /// <param name="pDeleteHash">The deletehash of the album that was returned at creation that this video has to be added to</param>
+    public static async Task<ImgurUploadResponse> UploadVideoAsync(string pPath, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pDeleteHash = "")
     {
-        return await UploadVideoAsync(File.ReadAllBytes(pPath), pTitle, pDescription, pAlbum);
+        return await UploadVideoAsync(File.ReadAllBytes(pPath), pDisableAudio, pTitle, pDescription, pDeleteHash);
     }
 
     /// <summary>
@@ -363,7 +288,6 @@ public static class Imgur
 
     public static void DeleteUpload(string pDeleteHash, Action<ImgurResponse> pCallback = null)
     {
-        
         Request(string.Format("{0}/{1}/remove_images/", UPLOAD_PATH, pDeleteHash), ImgurRequestMethod.DELETE, null, pCallback);
     }
 
@@ -377,7 +301,7 @@ public static class Imgur
     }
 
 
-    private static void Request<T>(string pPath, ImgurRequestMethod pMethod, NameValueCollection pValues = null, Action<T> pResponse = null)
+    private static void Request<T>(string pPath, ImgurRequestMethod pMethod, string pBody = null, Action<T> pResponse = null)
     {
         if (!IsAuthenticated())
         {
@@ -393,7 +317,7 @@ public static class Imgur
             switch (pMethod)
             {
                 case ImgurRequestMethod.POST:
-                    json = Encoding.UTF8.GetString(client.UploadValues(IMGUR_BASE_URL + pPath, pMethod.ToString(), pValues));
+                    json = client.UploadString(new Uri(IMGUR_BASE_URL + pPath), pMethod.ToString(), pBody);
                     break;
                 case ImgurRequestMethod.GET:
                     json = client.DownloadString(IMGUR_BASE_URL + pPath);
@@ -409,7 +333,7 @@ public static class Imgur
 
     }
 
-    private static async Task<T> RequestAsync<T>(string pPath, ImgurRequestMethod pMethod, NameValueCollection pValues = null)
+    private static async Task<T> RequestAsync<T>(string pPath, ImgurRequestMethod pMethod, string pBody = null)
     {
         if (!IsAuthenticated())
         {
@@ -420,11 +344,12 @@ public static class Imgur
         {
 
             client.Headers.Add("Authorization", "Client-ID " + _clientId);
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
             string json = "";
             switch (pMethod)
             {
                 case ImgurRequestMethod.POST:
-                    json = Encoding.UTF8.GetString(await client.UploadValuesTaskAsync(IMGUR_BASE_URL + pPath, pMethod.ToString(), pValues));
+                    json = await client.UploadStringTaskAsync(new Uri(IMGUR_BASE_URL + pPath), pMethod.ToString(), pBody);
                     break;
                 case ImgurRequestMethod.GET:
                     json = await client.DownloadStringTaskAsync(IMGUR_BASE_URL + pPath);

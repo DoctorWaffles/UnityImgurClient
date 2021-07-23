@@ -13,9 +13,7 @@ public static class Imgur
     static readonly string ALBUM_PATH = "album";
     static readonly string CREDITS_PATH = "credits";
 
-
     private static string _clientId;
-
 
     /// <summary>
     ///  Updates the information of an album
@@ -37,7 +35,6 @@ public static class Imgur
         };
         Request(string.Format("{0}/{1}", ALBUM_PATH, pDeleteHash), ImgurRequestMethod.POST, values, pCallback);
     }
-
 
     /// <summary>
     /// Updates the information of an album
@@ -294,7 +291,7 @@ public static class Imgur
     /// <param name="pDescription">The description of the video</param>
     /// <param name="pAlbum">The deletehash of the album that was returned at creation</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadVideo(byte[] pBytes, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadVideo(byte[] pBytes, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
     {
         string base64Video = Convert.ToBase64String(pBytes);
         var values = new NameValueCollection
@@ -304,6 +301,7 @@ public static class Imgur
             { "title", pTitle },
             { "description", pDescription },
             { "album", pAlbum },
+            { "disable_audio", pDisableAudio ? "1" : "0" }
         };
 
         Request(UPLOAD_PATH, ImgurRequestMethod.POST, values, pCallback);
@@ -318,9 +316,9 @@ public static class Imgur
     /// <param name="pDescription">The description of the video</param>
     /// <param name="pAlbum">The deletehash of the album that was returned at creation that this video has to be added to</param>
     /// <param name="pCallback">Response callback</param>
-    public static void UploadVideo(string pPath, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
+    public static void UploadVideo(string pPath, bool pDisableAudio = false, string pTitle = "", string pDescription = "", string pAlbum = "", Action<ImgurUploadResponse> pCallback = null)
     {
-        UploadVideo(File.ReadAllBytes(pPath), pTitle, pDescription, pAlbum, pCallback);
+        UploadVideo(File.ReadAllBytes(pPath), pDisableAudio, pTitle, pDescription, pAlbum, pCallback);
     }
 
 

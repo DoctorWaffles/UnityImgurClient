@@ -21,7 +21,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the album</param>
     /// <param name="pTitle">The title of the ablum</param>
     /// <param name="pDescription">The description of the ablum</param>
-    /// <param name="pDeleteHashes">The deletehashes of the images that needs to be added to the album</param>
+    /// <param name="pDeleteHashes">The deletehashes of the images that you want to be included in the album</param>
     /// <param name="pCallback">Response callback</param>
     public static void UpdateAlbum(string pDeleteHash, string pTitle, string pDescription = "", string[] pDeleteHashes = null, Action<ImgurAlbumResponse> pCallback = null)
     {
@@ -42,7 +42,7 @@ public static class Imgur
     /// <param name="pDeleteHash">The deletehash of the album</param>
     /// <param name="pTitle">The title of the ablum</param>
     /// <param name="pDescription">The description of the ablum</param>
-    /// <param name="pDeleteHashes">The deletehashes of the images that needs to be added to the album</param>
+    /// <param name="pDeleteHashes">The deletehashes of the images that you want to be included in the album</param>
     public static async Task<ImgurAlbumResponse> UpdateAlbumAsync(string pDeleteHash, string pTitle, string pDescription = "", string[] pDeleteHashes = null)
     {
         var values = new NameValueCollection

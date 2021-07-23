@@ -11,6 +11,9 @@ A small script that allows for uploading videos, images and creating albums on I
     + [UploadImage](#uploadimage)
     + [UpdateUpload](#updateupload)
     + [DeleteUpload](#deleteupload)
+  * [Albums](#albums)
+    + [CreateAlbum](#createalbum)
+    + [UpdateAlbum](#updatealbum)
 
 ## Getting Started
 - Download latest version from [releases](https://github.com/DoctorWaffles/UnityImgur/releases/).
@@ -23,7 +26,6 @@ Imgur allows two types of authentication, however given user-authenicated reques
 All these examples use a path, however a byte[] is also supported.
 
 ### Uploads
-
 #### UploadVideo
 Uploads a new video.
 
@@ -97,4 +99,38 @@ if (response.success)
     Debug.Log("Upload deleted");
 ```
 
+### Albums
+
+#### CreateAlbum
+Creates an album
+
+>With callback
+```csharp
+Imgur.CreateAlbum("A newly created album", "A newly created album through UnityImgur", null, (response) => {
+    if (response.success)
+        Debug.Log(response.data.link);
+});
+```
+>With async
+```csharp
+ImgurAlbumResponse response = await Imgur.CreateAlbumAsync("A newly created album", "A newly created album through UnityImgur");
+if (response.success)
+    Debug.Log(response.data.link);
+```
+
+#### UpdateAlbum
+Updates the information of an album
+>With callback
+```csharp
+Imgur.UpdateAlbum("XyigKf", "A new title for this album", "A new description for this album", null, (response) => {
+    if (response.success)
+        Debug.Log(response.data.link);
+});
+```
+>With async
+```csharp
+ImgurAlbumResponse response = await Imgur.UpdateAlbumAsync("XyigKf", "A new title for this album", "A new description for this album", null);
+if (response.success)
+    Debug.Log(response.data.link);
+```
 

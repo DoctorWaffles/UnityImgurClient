@@ -22,6 +22,35 @@ A small script that allows for uploading videos, images and creating albums on I
 ### Authentication
 Imgur allows two types of authentication, however given user-authenicated request require a OAuth2.0 token, which  client_id which can be request [here](https://api.imgur.com/oauth2/addclient).
 
+
+
+## Example
+```csharp
+// Store the deletehashes of the images we are about to upload
+List<string> deletehashes = new List<string>();
+
+// Upload 5 images
+for (int i = 0; i < 5; i++)
+{
+    ImgurUploadResponse uploadResponse = await Imgur.UploadImageAsync(Application.dataPath + @"\" + "image.jpg");
+    if (!uploadResponse.success) return;
+    deletehashes.Add(uploadResponse.data.deletehash);
+    Debug.Log("Successfully uploaded image with deletehash " + uploadResponse.data.deletehash);
+}
+// Don't continue further if no images were uploaded
+if (imageDeletehashes.Count <= 0) return;
+
+// Create album with the previously received deletehashes
+ImgurAlbumResponse createAlbumResponse = await Imgur.CreateAlbumAsync("A new album", "A newly created album!", "", "", deletehashes.ToArray());
+if (!createAlbumResponse.success) return;
+
+// Get the album information, such as the link
+ImgurAlbumResponse getAlbumResponse = await Imgur.GetAlbumAsync(createAlbumResponse.data.id);
+if (!getAlbumResponse.success) return;
+
+Debug.LogFormat("The newly created album can be found on {0}", getAlbumResponse.data.link);
+```
+        
 ## Functions
 All these examples use a path, however a byte[] is also supported.
 

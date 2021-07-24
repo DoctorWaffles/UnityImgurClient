@@ -36,7 +36,7 @@ UnityImgurClient ImgurClient = new UnityImgurClient("5362011a8be87ae");
 
 // Upload two images and store their deletehashes
 List<string> imageDeletehashes = new List<string>();
-ImgurUploadRequest imageUploadRequest = new ImgurUploadRequest(title: "A new album's title", description: "A new album's description");
+ImgurUploadRequest imageUploadRequest = new ImgurUploadRequest(title: "An image title", description: "An image description");
 for (int i = 0; i < 2; i++)
 {
     ImgurUploadResponse uploadImageResponse = await ImgurClient.UploadImageAsync(Application.dataPath + @"\image.jpg", imageUploadRequest);
@@ -57,7 +57,7 @@ for (int i = 0; i < 2; i++)
 if(imageDeletehashes.Count < 0) return;
 
 // Create a new album with those images
-ImgurAlbumRequest createAlbumRequest = new ImgurAlbumRequest(title: "A new album's title", description: "A new album's description", deletehashes: imageDeletehashes.ToArray());
+ImgurAlbumRequest createAlbumRequest = new ImgurAlbumRequest(title: "An album title", description: "An album description", deletehashes: imageDeletehashes.ToArray());
 ImgurAlbumResponse createAlbumResponse = await ImgurClient.CreateAlbumAsync(createAlbumRequest);
 if (createAlbumResponse.success)
 {
@@ -123,7 +123,7 @@ Uploads a new image.
 
 > With callback
 ```csharp
-var request = new ImgurUploadRequest(title: "An new image title", description: "An image description");
+var request = new ImgurUploadRequest(title: "An image title", description: "An image description");
 ImgurClient.UploadImage(Application.dataPath + @"\image.jpg", request, (response) =>
 {
     if (response.success)
@@ -339,7 +339,7 @@ else
 ### Misc.
 
 #### GetRateLimit
-Gets the current credit budget of the current user and application
+Gets the current credit budget of the current user and application, for more details read more about Imgur's Rate Limits on [Imgur's API Docs](https://apidocs.imgur.com/#intro)
 >With callback
 ```csharp
 ImgurClient.GetRateLimit((response) => {

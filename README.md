@@ -1,7 +1,7 @@
 
 # UnityImgurClient
 
-A small script that allows for uploading videos, images and creating albums on Imgur's servers similar to CarlHalstead's [Imgur-For-Unity](https://github.com/CarlHalstead/Imgur-for-Unity), however with a few more methods such as updating and deleting previously uploaded content and albums.
+A small wrapper that allows for uploading videos, images and creating albums on Imgur's servers similar to CarlHalstead's [Imgur-For-Unity](https://github.com/CarlHalstead/Imgur-for-Unity), however with a few more methods such as updating and deleting previously uploaded content and albums.
 
 - [Getting Started](#getting-started)
   * [Authentication](#authentication)
